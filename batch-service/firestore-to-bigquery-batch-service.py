@@ -62,5 +62,7 @@ def create_temp_file(documents: Generator):
             file.write(f'{doc.to_dict()}\n')
 
 
+
+
 if __name__ == "__main__":
     export_firestore_to_bigquery()
