@@ -1,3 +1,17 @@
+substitutions:
+  _APP: firestore-to-bigquery-batch-service
+  _REPO_NAME: firestore-to-bigquery
+  _SECRETS_VARS: "MYSQL_URL=mysql-url:latest"
+  _LOCATION: southamerica-east1
+  _CLOUD_RUN_JOB_CPU: "1"
+  _CLOUD_RUN_MEMORY: 512Mi
+  _KMS_KEY: env
+  _KMS_KEYRING: secrets
+  _KMS_LOCATION: global
+  _TASK_COUNT: "1"
+
+
+
 options:
   logging: CLOUD_LOGGING_ONLY
 
@@ -7,7 +21,7 @@ steps:
     args:
       - '-c'
       - |
-        gcloud run jobs deploy firestore-to-bigquery-batch-service \
+        gcloud run jobs deploy $_APP \
           --source . \
           --tasks 50 \
           --set-env-vars SLEEP_MS=10000 \
@@ -15,6 +29,28 @@ steps:
           --max-retries 5 \
           --region us-central1 \
           --project=$PROJECT_ID
+        
 
+steps:
+  - name: 'gcr.io/cloud-builders/pack'
+    args: ['build', 'gcr.io/$PROJECT_ID/$REPO_NAME:$COMMIT_SHA', '--builder=gcr.io/buildpacks/builder']
+    env:
+      - 'GOOGLE_RUNTIME=python'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - '$_APP'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/$REPO_NAME:$COMMIT_SHA'
+      - '--region'
+      - 'us-central1'
+      - '--platform'
+      - 'managed'
 images:
-  - 'gcr.io/$PROJECT_ID/firestore-to-bigquery-batch-service'
+  - 'gcr.io/$PROJECT_ID/$REPO_NAME:$COMMIT_SHA'
+artifacts:
+  objects:
+    location: 'gs://$PROJECT_ID/$REPO_NAME/$COMMIT_SHA/'
+    paths: ['**']
