@@ -27,7 +27,7 @@
 
 import json
 
-def hello_firestore(data, context):
+def main(data, context):
     """Triggered by a change to a Firestore document.
     Args:
         data (dict): The event payload.
