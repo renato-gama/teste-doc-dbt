@@ -1,12 +1,9 @@
 import logging
-from datetime import datetime
 
-from google.cloud import firestore
 from google.cloud import bigquery
-from typing import Any, Callable, Generator, Tuple, Union
-from person import Person
+from google.cloud import firestore
 
-from exceptions import BigQueryException
+from person import Person
 
 logger = logging.getLogger(__name__)
 
@@ -25,16 +22,19 @@ def export_firestore_to_bigquery():
     create_temp_file(documents)
     insert_into_bigquery()
 
+
 def get_firestore_documets():
     firestore_client = firestore.Client(database=FIRESTORE_DATABASE)
     firestore_ref = firestore_client.collection(COLLECTION_NAME)
     return firestore_ref.stream()
+
 
 def create_temp_file(documents):
     with open(JSON_FILE_PATH, 'w') as file:
         for doc in documents:
             person = Person(doc=doc)
             file.write(f'{person.json_object}\n')
+
 
 def insert_into_bigquery():
     bigquery_client = bigquery.Client()
@@ -50,7 +50,9 @@ def insert_into_bigquery():
         job = bigquery_client.load_table_from_file(source_file, table_ref, job_config=job_config)
         job.result()
 
-    print(f'Dados da coleção {COLLECTION_NAME} exportados para a tabela {BIGQUERY_DATASET_ID}.{BIGQUERY_TABLE_ID} no BigQuery')
+    print(
+        f'Dados da coleção {COLLECTION_NAME} exportados para a tabela {BIGQUERY_DATASET_ID}.{BIGQUERY_TABLE_ID} no BigQuery')
+
 
 def table_schema():
     return [
@@ -63,6 +65,7 @@ def table_schema():
         bigquery.SchemaField("height", "NUMERIC"),
         bigquery.SchemaField("birth_date", "DATE")
     ]
+
 
 if __name__ == "__main__":
     export_firestore_to_bigquery()
