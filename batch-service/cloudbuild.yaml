@@ -2,26 +2,19 @@ options:
   logging: CLOUD_LOGGING_ONLY
 
 steps:
-  - name: 'gcr.io/cloud-builders/docker'
-    id: Build the container image
-    args: ['build', '-t', 'gcr.io/$PROJECT_ID/firestore-to-bigquery-batch-service', '.']
-
-  - name: 'gcr.io/cloud-builders/docker'
-    id: Push the container image to Container Registry
-    waitFor:
-      - Build the container image
-    args: ['push', 'gcr.io/$PROJECT_ID/firestore-to-bigquery-batch-service']
-
   - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        gcloud run deploy firestore-to-bigquery-batch-service \
-          --image gcr.io/$PROJECT_ID/$_APP_NAME \
-          --platform managed \
+        gcloud run jobs deploy firestore-to-bigquery-batch-service \
+          --source . \
+          --tasks 50 \
+          --set-env-vars SLEEP_MS=10000 \
+          --set-env-vars FAIL_RATE=0.1 \
+          --max-retries 5 \
           --region us-central1 \
-          --no-allow-unauthenticated
+          --project=$PROJECT_ID
 
 images:
   - 'gcr.io/$PROJECT_ID/firestore-to-bigquery-batch-service'

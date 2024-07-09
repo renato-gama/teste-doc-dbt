@@ -2,9 +2,12 @@ import logging
 
 from google.cloud import firestore
 from google.cloud import bigquery
+from typing import Any, Callable, Generator, Tuple, Union
 
 logger = logging.getLogger(__name__)
 
+JSON_FILE_PATH = 'C:\\Workspace - Renato\\firestore_data.json'
+# JSON_FILE_PATH = '/tmp/firestore_data.json'
 
 def export_firestore_to_bigquery():
     logger.info("teste de log")
@@ -30,7 +33,7 @@ def export_firestore_to_bigquery():
         bigquery.SchemaField("email", "STRING"),
         bigquery.SchemaField("weight", "NUMERIC"),
         bigquery.SchemaField("height", "NUMERIC"),
-        bigquery.SchemaField("birth_date", "DATE")
+        # bigquery.SchemaField("birth_date", "DATE")
     ]
 
     # Configuração do job de inserção
@@ -42,23 +45,21 @@ def export_firestore_to_bigquery():
 
     # Busca os documentos do Firestore
     documents = firestore_ref.stream()
-
-    # Cria um arquivo temporário para armazenar os dados
-    # temp_file = '/tmp/firestore_data.json'
-    json_file_path  = 'C:\\Workspace - Renato\\firestore_data.json'
-    with open(json_file_path , 'w') as file:
-        for doc in documents:
-            # converted_row = convert_row(doc)
-            file.write(f'{doc.to_dict()}\n')
+    print(type(documents))
+    create_temp_file(documents)
 
     # Carrega os dados para o BigQuery
-    with open(json_file_path , 'rb') as source_file:
+    with open(JSON_FILE_PATH , 'rb') as source_file:
         job = bigquery_client.load_table_from_file(source_file, table_ref, job_config=job_config)
         job.result()  # Aguarda a conclusão do job
 
     print(f'Dados da coleção {collection_name} exportados para a tabela {dataset_id}.{table_id} no BigQuery')
 
-# def convert_row():
+def create_temp_file(documents: Generator):
+    with open(JSON_FILE_PATH, 'w') as file:
+        for doc in documents:
+            # converted_row = convert_row(doc)
+            file.write(f'{doc.to_dict()}\n')
 
 
 if __name__ == "__main__":
