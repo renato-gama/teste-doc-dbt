@@ -7,7 +7,7 @@ WORKDIR /app
 # Copia o requirements.txt e instala as dependências
 COPY . .
 RUN ls -lh
-RUN pip install --no-cache-dir -r batch-service/requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copia o código do app para o contêiner
 COPY . .
