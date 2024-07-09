@@ -6,6 +6,9 @@ substitutions:
   _KMS_KEYRING: secrets
   _KMS_LOCATION: global
 
+options:
+  logging: CLOUD_LOGGING_ONLY
+
 steps:
   - name: 'gcr.io/cloud-builders/docker'
     id: Build the container image
