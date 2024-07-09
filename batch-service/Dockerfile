@@ -1,0 +1,16 @@
+# Use uma imagem base do Python
+FROM python:3.9-slim
+
+# Define o diretório de trabalho
+WORKDIR /app
+
+# Copia o requirements.txt e instala as dependências
+COPY . .
+RUN ls -lh
+RUN pip install --no-cache-dir -r batch-service/requirements.txt
+
+# Copia o código do app para o contêiner
+COPY . .
+
+# Comando de execução do script Python
+CMD ["python", "firestore-to_bigquery-batch-service.py"]
