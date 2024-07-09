@@ -1,8 +1,12 @@
 import logging
+from datetime import datetime
 
 from google.cloud import firestore
 from google.cloud import bigquery
 from typing import Any, Callable, Generator, Tuple, Union
+import json
+
+from exceptions import BigQueryException
 
 logger = logging.getLogger(__name__)
 
@@ -27,13 +31,14 @@ def export_firestore_to_bigquery():
     table_ref = bigquery_client.dataset(dataset_id).table(table_id)
 
     schema = [
+        bigquery.SchemaField("id", "STRING"),
         bigquery.SchemaField("name", "STRING"),
         bigquery.SchemaField("surname", "STRING"),
         bigquery.SchemaField("document", "STRING"),
         bigquery.SchemaField("email", "STRING"),
         bigquery.SchemaField("weight", "NUMERIC"),
         bigquery.SchemaField("height", "NUMERIC"),
-        # bigquery.SchemaField("birth_date", "DATE")
+        bigquery.SchemaField("birth_date", "DATE")
     ]
 
     # Configuração do job de inserção
@@ -45,23 +50,32 @@ def export_firestore_to_bigquery():
 
     # Busca os documentos do Firestore
     documents = firestore_ref.stream()
-    print(type(documents))
     create_temp_file(documents)
 
     # Carrega os dados para o BigQuery
-    with open(JSON_FILE_PATH , 'rb') as source_file:
-        job = bigquery_client.load_table_from_file(source_file, table_ref, job_config=job_config)
-        job.result()  # Aguarda a conclusão do job
+    with open(JSON_FILE_PATH, 'rb') as source_file:
+        try:
+            job = bigquery_client.load_table_from_file(source_file, table_ref, job_config=job_config)
+            job.result()  # Aguarda a conclusão do job
+        except Exception as e:
+            raise BigQueryException('Error to insert data into BigQUery. There are invalid data')
 
     print(f'Dados da coleção {collection_name} exportados para a tabela {dataset_id}.{table_id} no BigQuery')
 
 def create_temp_file(documents: Generator):
     with open(JSON_FILE_PATH, 'w') as file:
         for doc in documents:
-            # converted_row = convert_row(doc)
-            file.write(f'{doc.to_dict()}\n')
+            converted_row = convert_row(doc)
+            file.write(f'{converted_row}\n')
 
+def convert_row(doc):
+    doc_dict = doc.to_dict()
+    doc_dict['id'] = doc.id
 
+    if 'birth_date' in doc_dict:
+        doc_dict['birth_date'] = str(datetime.date(doc_dict['birth_date']))
+
+    return doc_dict
 
 
 if __name__ == "__main__":
