@@ -1,0 +1,33 @@
+substitutions:
+  _APP_NAME: firestore-to-bigquery-batch-service
+  _ENV: nonprod
+  _LOCATION: southamerica-east1
+  _KMS_KEY: env
+  _KMS_KEYRING: secrets
+  _KMS_LOCATION: global
+
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    id: Build the container image
+    entrypoint: bash
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/$_APP_NAME', '.']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    id: Push the container image to Container Registry
+    waitFor:
+      - Build the container image
+    args: ['push', 'gcr.io/$PROJECT_ID/$_APP_NAME']
+
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud run deploy $_APP_NAME \
+          --image gcr.io/$PROJECT_ID/$_APP_NAME \
+          --platform managed \
+          --region us-central1 \
+          --no-allow-unauthenticated
+
+images:
+  - 'gcr.io/$PROJECT_ID/seu_app'
