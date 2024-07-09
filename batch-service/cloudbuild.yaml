@@ -10,26 +10,9 @@ substitutions:
   _KMS_LOCATION: global
   _TASK_COUNT: "1"
 
-
-
 options:
   logging: CLOUD_LOGGING_ONLY
 
-steps:
-  - name: 'gcr.io/cloud-builders/gcloud'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        gcloud run jobs deploy $_APP \
-          --source . \
-          --tasks 50 \
-          --set-env-vars SLEEP_MS=10000 \
-          --set-env-vars FAIL_RATE=0.1 \
-          --max-retries 5 \
-          --region us-central1 \
-          --project=$PROJECT_ID
-        
 
 steps:
   - name: 'gcr.io/cloud-builders/pack'
