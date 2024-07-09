@@ -13,16 +13,16 @@ steps:
       - Build the container image
     args: ['push', 'gcr.io/$PROJECT_ID/firestore-to-bigquery-batch-service']
 
-  - name: 'gcr.io/cloud-builders/gcloud'
-    entrypoint: 'bash'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
     args:
-      - '-c'
-      - |
-        gcloud run deploy firestore-to-bigquery-batch-service \
-          --image gcr.io/$PROJECT_ID/$_APP_NAME \
-          --platform managed \
-          --region us-central1 \
-          --no-allow-unauthenticated
+      - 'run'
+      - 'deploy'
+      - 'firestore-to-bigquery-batch-service'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/SERVICE_NAME:$COMMIT_SHA'
+      - '--region'
+      - 'us-central1'
 
 images:
-  - 'gcr.io/$PROJECT_ID/firestore-to-bigquery-batch-service'
+  - 'gcr.io/$PROJECT_ID/firestore-to-bigquery-batch-service:$COMMIT_SHA'
