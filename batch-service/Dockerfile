@@ -13,4 +13,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Comando de execução do script Python
-CMD ["python", "firestore-to_bigquery-batch-service.py"]
+CMD ["python", "firestore-to-bigquery-batch-service.py"]
