@@ -1,10 +1,6 @@
 substitutions:
   _APP_NAME: firestore-to-bigquery-batch-service
-  _ENV: nonprod
   _LOCATION: southamerica-east1
-  _KMS_KEY: env
-  _KMS_KEYRING: secrets
-  _KMS_LOCATION: global
 
 options:
   logging: CLOUD_LOGGING_ONLY
@@ -33,4 +29,4 @@ steps:
           --no-allow-unauthenticated
 
 images:
-  - 'gcr.io/$PROJECT_ID/seu_app'
+  - 'gcr.io/$PROJECT_ID/$_APP_NAME'
