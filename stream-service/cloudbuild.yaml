@@ -3,17 +3,18 @@ options:
 
 steps:
   - name: 'gcr.io/cloud-builders/docker'
-    args: [ 'build', '-t', 'gcr.io/$PROJECT_ID/firestore-to-bigquery-batch-service', '.' ]
+    args: [ 'build', '-t', 'gcr.io/$PROJECT_ID/firestore-to-bigquery-stream-service', '.' ]
+    dir: 'stream-service'
 
   - name: 'gcr.io/cloud-builders/docker'
-    args: [ 'push', 'gcr.io/$PROJECT_ID/firestore-to-bigquery-batch-service' ]
+    args: [ 'push', 'gcr.io/$PROJECT_ID/firestore-to-bigquery-stream-service' ]
 
   - name: 'gcr.io/cloud-builders/gcloud'
     args:
       - 'run'
       - 'deploy'
-      - 'firestore-to-bigquery-batch-service'
-      - '--image=gcr.io/$PROJECT_ID/firestore-to-bigquery-batch-service'
+      - 'firestore-to-bigquery-stream-service'
+      - '--image=gcr.io/$PROJECT_ID/firestore-to-bigquery-stream-service'
       - '--platform=managed'
       - '--region=us-central1'
       - '--no-allow-unauthenticated'
