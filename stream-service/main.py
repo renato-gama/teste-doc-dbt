@@ -7,9 +7,7 @@ from google.cloud import logging
 STRING_FIELDS = ['name', 'surname', 'document', 'email']
 FLOAT_FIELDS = ['height', 'weight']
 
-logging_client = logging.Client()
-log_name = "firestore-to-bigquery-stream"
-logger = logging_client.logger(log_name)
+logger = logging.Client().logger(__name__)
 
 @functions_framework.cloud_event
 def main(cloud_event: CloudEvent) -> None:
