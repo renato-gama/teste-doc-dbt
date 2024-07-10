@@ -2,6 +2,7 @@ import functions_framework
 from cloudevents.http import CloudEvent
 from google.events.cloud import firestore
 from google.cloud import bigquery
+from exceptions import BigQueryException
 
 STRING_FIELDS = ['name', 'surname', 'document', 'email']
 FLOAT_FIELDS = ['height', 'weight']
@@ -67,6 +68,9 @@ def execute_query(query):
     print('Executing query')
     print(query)
     client = bigquery.Client()
-    query_job = client.query(query)
-    query_job.result()
+    try:
+        query_job = client.query(query)
+        query_job.result()
+    except Exception as e:
+        raise BigQueryException(f'An error occurred when execute merge in bigquery: {str(e)}')
 
