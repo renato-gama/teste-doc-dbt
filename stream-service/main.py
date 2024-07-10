@@ -48,6 +48,7 @@ def main(cloud_event: CloudEvent) -> None:
 
     merge_query = create_merge_query(firestore_data, update_set, insert, values)
     execute_query(merge_query)
+    print('Document created/inserted successfully')
 
 def create_merge_query(firestore_data, update_set, insert, values):
     print('Creating merge query')
