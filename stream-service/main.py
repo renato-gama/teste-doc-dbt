@@ -1,3 +1,4 @@
+from datetime import datetime
 import functions_framework
 from cloudevents.http import CloudEvent
 from google.events.cloud import firestore
@@ -6,6 +7,7 @@ from exceptions import BigQueryException, FieldNotFoundException
 
 STRING_FIELDS = ['name', 'surname', 'document', 'email']
 FLOAT_FIELDS = ['height', 'weight']
+DATE_FIELDS = ['birth_date']
 
 @functions_framework.cloud_event
 def main(cloud_event: CloudEvent) -> None:
@@ -39,6 +41,8 @@ def main(cloud_event: CloudEvent) -> None:
             firestore_data = f'''{firestore_data}, '{item[1].string_value}' AS {key}'''
         elif key in FLOAT_FIELDS:
             firestore_data = f'''{firestore_data}, {item[1].double_value} AS {key}'''
+        elif key in DATE_FIELDS:
+            firestore_data = f'''{firestore_data}, '{datetime.date(item[1].timestamp_value)}' AS {key}'''
         else:
             raise FieldNotFoundException(f'Field [{key}] is not in BigQuery Schema]')
 
