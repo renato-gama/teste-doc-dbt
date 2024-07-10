@@ -7,7 +7,7 @@ steps:
   args:
     - '-c'
     - |
-      cd firestore-to-bigquery-batch-service
+      cd firestore-to-bigquery-stream-service
       gcloud functions deploy firestore-to-bigquery-stream-service \
       --entry-point=main \
       --runtime python38 \
