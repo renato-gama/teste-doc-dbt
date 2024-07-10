@@ -38,7 +38,7 @@ def main(cloud_event: CloudEvent) -> None:
         if key in STRING_FIELDS:
             firestore_data = f'''{firestore_data}, '{item[1].string_value}' AS {key}'''
         if key in FLOAT_FIELDS:
-            firestore_data = f'''{firestore_data}, '{item[1].double_value}' AS {key}'''
+            firestore_data = f'''{firestore_data}, {item[1].double_value} AS {key}'''
 
         update_set = f'''{update_set} {key}=firestore.{key}'''
         insert = f'''{insert} {key}'''
