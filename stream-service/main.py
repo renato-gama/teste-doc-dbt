@@ -42,7 +42,7 @@ def main(cloud_event: CloudEvent) -> None:
         elif key in FLOAT_FIELDS:
             firestore_data = f'''{firestore_data}, {item[1].double_value} AS {key}'''
         elif key in DATE_FIELDS:
-            firestore_data = f'''{firestore_data}, '{datetime.date(item[1].timestamp_value)}' AS {key}'''
+            firestore_data = f'''{firestore_data}, DATE('{datetime.date(item[1].timestamp_value)}') AS {key}'''
         else:
             raise FieldNotFoundException(f'Field [{key}] is not in BigQuery Schema]')
 
