@@ -57,8 +57,7 @@ def insert_into_bigquery():
         except Exception as e:
             raise BigQueryException(f'An error occurred when execute inserto into bigquery: {str(e)}')
 
-    print(f'Dados da coleção {COLLECTION_NAME} exportados '
-          f'para a tabela {BIGQUERY_DATASET_ID}.{BIGQUERY_TABLE_ID} no BigQuery')
+    print(f'Data from colletion [{COLLECTION_NAME}] saved in  bigquery table [{BIGQUERY_DATASET_ID}.{BIGQUERY_TABLE_ID}]')
 
 
 def table_schema():
