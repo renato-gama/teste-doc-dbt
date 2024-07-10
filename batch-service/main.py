@@ -10,7 +10,6 @@ FIRESTORE_DATABASE = 'porfin'
 COLLECTION_NAME = 'person'
 BIGQUERY_DATASET_ID = 'porfin'
 BIGQUERY_TABLE_ID = 'person'
-# JSON_FILE_PATH = 'C:\\Workspace - Renato\\firestore_data.json'
 JSON_FILE_PATH = '/tmp/firestore_data.json'
 
 def main():
@@ -64,7 +63,7 @@ def insert_into_bigquery():
 
 def table_schema():
     return [
-        bigquery.SchemaField("id", "INTEGER"),
+        bigquery.SchemaField("id", "STRING"),
         bigquery.SchemaField("name", "STRING"),
         bigquery.SchemaField("surname", "STRING"),
         bigquery.SchemaField("document", "STRING"),
