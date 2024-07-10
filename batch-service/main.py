@@ -10,8 +10,8 @@ FIRESTORE_DATABASE = 'ABC'
 COLLECTION_NAME = 'person'
 BIGQUERY_DATASET_ID = 'porfin'
 BIGQUERY_TABLE_ID = 'person'
-JSON_FILE_PATH = 'C:\\Workspace - Renato\\firestore_data.json'
-# JSON_FILE_PATH = '/tmp/firestore_data.json'
+# JSON_FILE_PATH = 'C:\\Workspace - Renato\\firestore_data.json'
+JSON_FILE_PATH = '/tmp/firestore_data.json'
 
 def main():
     print("Initiazing bacth proccess")
