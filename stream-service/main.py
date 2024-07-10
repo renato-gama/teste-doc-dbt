@@ -2,12 +2,14 @@ import functions_framework
 from cloudevents.http import CloudEvent
 from google.events.cloud import firestore
 from google.cloud import bigquery
-import logging
+from google.cloud import logging
 
 STRING_FIELDS = ['name', 'surname', 'document', 'email']
 FLOAT_FIELDS = ['height', 'weight']
 
-logger = logging.getLogger(__name__)
+logging_client = logging.Client()
+log_name = "firestore-to_bigquery-stream"
+logger = logging_client.logger(log_name)
 
 @functions_framework.cloud_event
 def main(cloud_event: CloudEvent) -> None:
@@ -49,6 +51,7 @@ def main(cloud_event: CloudEvent) -> None:
     execute_query(merge_query)
 
 def create_merge_query(firestore_data, update_set, insert, values):
+    print('Creating merge query')
     return f"""
             MERGE `porfin.person` person
             USING (
@@ -65,6 +68,8 @@ def create_merge_query(firestore_data, update_set, insert, values):
         """
 
 def execute_query(query):
+    print('Executing query')
+    print(query)
     client = bigquery.Client()
     query_job = client.query(query)
     query_job.result()
