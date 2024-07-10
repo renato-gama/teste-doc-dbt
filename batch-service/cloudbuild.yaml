@@ -16,6 +16,7 @@ steps:
     entrypoint: gcloud
     args:
       - 'run'
+      - 'jobs'
       - 'deploy'
       - 'firestore-to-bigquery-batch-service'
       - '--image'

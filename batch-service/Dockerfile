@@ -5,13 +5,9 @@ FROM python:3.9-slim
 WORKDIR /app
 
 # Copia o requirements.txt e instala as dependências
-COPY batch-service .
+COPY batch-service/requirements.txt .
+COPY batch-service/main.py .
 RUN pip install --no-cache-dir -r requirements.txt
-
-# Copia o código do app para o contêiner
-COPY . .
-
-EXPOSE 8080
 
 # Comando de execução do script Python
 CMD ["python", "main.py"]
