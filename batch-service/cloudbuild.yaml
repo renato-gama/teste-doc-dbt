@@ -20,7 +20,7 @@ steps:
       - 'deploy'
       - 'firestore-to-bigquery-batch-service'
       - '--image'
-      - 'gcr.io/$PROJECT_ID/SERVICE_NAME:$COMMIT_SHA'
+      - 'gcr.io/$PROJECT_ID/firestore-to-bigquery-batch-service:$COMMIT_SHA'
       - '--region'
       - 'us-central1'
 
