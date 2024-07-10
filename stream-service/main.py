@@ -2,17 +2,14 @@ import functions_framework
 from cloudevents.http import CloudEvent
 from google.events.cloud import firestore
 from google.cloud import bigquery
-from google.cloud import logging
 
 STRING_FIELDS = ['name', 'surname', 'document', 'email']
 FLOAT_FIELDS = ['height', 'weight']
 
-logger = logging.Client().logger(__name__)
-
 @functions_framework.cloud_event
 def main(cloud_event: CloudEvent) -> None:
 
-    logger.info("Event received  for Firestore")
+    print("Event received  for Firestore")
 
     firestore_payload = firestore.DocumentEventData()
     firestore_payload._pb.ParseFromString(cloud_event.data)
@@ -24,6 +21,7 @@ def main(cloud_event: CloudEvent) -> None:
     insert = ''
     values = ''
 
+    print(f'Iterate over fields from document [{id}]')
     for index, item in enumerate(firestore_payload.value.fields.items(), start=1):
         key = item[0]
 
