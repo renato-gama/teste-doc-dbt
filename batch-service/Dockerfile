@@ -5,8 +5,7 @@ FROM python:3.9-slim
 WORKDIR /app
 
 # Copia o requirements.txt e instala as dependências
-COPY . .
-RUN ls -lh
+COPY batch-service .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copia o código do app para o contêiner
