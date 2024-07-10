@@ -2,16 +2,19 @@ import functions_framework
 from cloudevents.http import CloudEvent
 from google.events.cloud import firestore
 from google.cloud import bigquery
+import google.cloud.logging
 import logging
 
 STRING_FIELDS = ['name', 'surname', 'document', 'email']
 FLOAT_FIELDS = ['height', 'weight']
 
-logger = logging.getLogger(__name__)
+google.cloud.logging.Client().setup_logging()
 
 @functions_framework.cloud_event
 def main(cloud_event: CloudEvent) -> None:
-    logger.info("Event received  for Firestore")
+
+
+    logging.info("Event received  for Firestore")
 
     firestore_payload = firestore.DocumentEventData()
     firestore_payload._pb.ParseFromString(cloud_event.data)
