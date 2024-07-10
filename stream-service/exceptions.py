@@ -1,5 +1,5 @@
 class BigQueryException(Exception):
     pass
 
-class IllegalFieldException(ValueError):
+class FieldNotFoundException(ValueError):
     pass
