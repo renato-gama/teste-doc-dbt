@@ -11,10 +11,10 @@ FIRESTORE_DATABASE = 'porfin'
 COLLECTION_NAME = 'person'
 BIGQUERY_DATASET_ID = 'porfin'
 BIGQUERY_TABLE_ID = 'person'
-JSON_FILE_PATH = 'C:\\Workspace - Renato\\firestore_data.json'
-# JSON_FILE_PATH = '/tmp/firestore_data.json'
+# JSON_FILE_PATH = 'C:\\Workspace - Renato\\firestore_data.json'
+JSON_FILE_PATH = '/tmp/firestore_data.json'
 
-def export_firestore_to_bigquery():
+def main():
     logger.info("teste de log")
     print("teste de print")
 
@@ -66,6 +66,4 @@ def table_schema():
         bigquery.SchemaField("birth_date", "DATE")
     ]
 
-
-if __name__ == "__main__":
-    export_firestore_to_bigquery()
+main()

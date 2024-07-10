@@ -8,13 +8,12 @@ FLOAT_FIELDS = ['height', 'weight']
 
 @functions_framework.cloud_event
 def main(cloud_event: CloudEvent) -> None:
-    # firestore_payload = firestore.DocumentEventData()
-    # firestore_payload._pb.ParseFromString(cloud_event.data)
-    #
-    # id = firestore_payload.value.name.split('/')[-1]
-    # print(f'id = {id}')
-    id = 'id_exemplo'
-    #
+    firestore_payload = firestore.DocumentEventData()
+    firestore_payload._pb.ParseFromString(cloud_event.data)
+
+    id = firestore_payload.value.name.split('/')[-1]
+    print(f'id = {id}')
+
     # for item in firestore_payload.value.fields.items():
     #     key = item[0]
     #     if key in STRING_FIELDS:
@@ -22,14 +21,14 @@ def main(cloud_event: CloudEvent) -> None:
     #     if key in FLOAT_FIELDS:
     #         print(f'valor = {item[1].double_value}')
 
-    items = [('name', 'Renato'), ('height', 1.77)]
+    # items = [('name', 'Renato'), ('height', 1.77)]
 
     firestore_data = ''
     update_set = ''
     insert = ''
     values = ''
 
-    for index, item in enumerate(items, start=1):
+    for index, item in enumerate(firestore_payload.value.fields.items(), start=1):
         key = item[0]
 
         if index == 1:
@@ -42,13 +41,11 @@ def main(cloud_event: CloudEvent) -> None:
             values = f'{values}, '
 
         if key in STRING_FIELDS:
-            firestore_data = f'''{firestore_data}, '{item[1]}' AS {key}'''
-            # print(f'valor={item[1]}')
-            # print(f'valor = {item[1].string_value}')
+            # firestore_data = f'''{firestore_data}, '{item[1]}' AS {key}'''
+            firestore_data = f'''{firestore_data}, '{item[1].string_value}' AS {key}'''
         if key in FLOAT_FIELDS:
-            firestore_data = f'{firestore_data}, {item[1]} AS {key}'
-            # print(f'valor={item[1]}')
-            # print(f'valor = {item[1].double_value}')
+            # firestore_data = f'{firestore_data}, {item[1]} AS {key}'
+            firestore_data = f'''{firestore_data}, '{item[1].double_value}' AS {key}'''
 
         update_set = f'''{update_set} {key}=firestore.{key}'''
         insert = f'''{insert} {key}'''
@@ -71,5 +68,3 @@ def create_merge_query(firestore_data, update_set, insert, values):
               INSERT ({insert})
               VALUES ({values})
         """
-
-main('')
