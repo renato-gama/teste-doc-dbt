@@ -61,8 +61,8 @@ def table_schema():
         bigquery.SchemaField("surname", "STRING"),
         bigquery.SchemaField("document", "STRING"),
         bigquery.SchemaField("email", "STRING"),
-        bigquery.SchemaField("weight", "NUMERIC"),
-        bigquery.SchemaField("height", "NUMERIC"),
+        bigquery.SchemaField("weight", "FLOAT"),
+        bigquery.SchemaField("height", "FLOAT"),
         bigquery.SchemaField("birth_date", "DATE")
     ]
 
