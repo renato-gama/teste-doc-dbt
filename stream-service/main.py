@@ -2,7 +2,7 @@ import functions_framework
 from cloudevents.http import CloudEvent
 from google.events.cloud import firestore
 from google.cloud import bigquery
-from google.cloud import logging
+import logging
 
 STRING_FIELDS = ['name', 'surname', 'document', 'email']
 FLOAT_FIELDS = ['height', 'weight']
