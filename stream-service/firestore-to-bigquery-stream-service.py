@@ -33,31 +33,32 @@ def main(cloud_event: CloudEvent) -> None:
         key = item[0]
 
         if index == 1:
-            firestore_data = f'''{id} AS id'''
-            insert = f'id'
-            values = f'firestore.id'
+            firestore_data = f""" '{id}' AS id"""
+            insert = f'id, '
+            values = f'firestore.id, '
         else:
-            firestore_data = f'{firestore_data},'
-            update_set = f''',{update_set} {key} = firestore.{key}'''
-            insert = f''',{insert} {key}'''
-            values = f''',{values} firestore.{key}'''
-
+            update_set = f'{update_set}, '
+            insert = f'{insert}, '
+            values = f'{values}, '
 
         if key in STRING_FIELDS:
-            firestore_data = f'''{firestore_data} '{item[1]}' AS {key}'''
+            firestore_data = f'''{firestore_data}, '{item[1]}' AS {key}'''
             # print(f'valor={item[1]}')
             # print(f'valor = {item[1].string_value}')
         if key in FLOAT_FIELDS:
-            firestore_data = f'{firestore_data} {item[1]} AS {key}'
+            firestore_data = f'{firestore_data}, {item[1]} AS {key}'
             # print(f'valor={item[1]}')
             # print(f'valor = {item[1].double_value}')
 
+        update_set = f'''{update_set} {key}=firestore.{key}'''
+        insert = f'''{insert} {key}'''
+        values = f'''{values} firestore.{key}'''
 
     print(create_merge_query(firestore_data, update_set, insert, values))
 
 def create_merge_query(firestore_data, update_set, insert, values):
-    return f'''
-            MERGE `dataset.person` person
+    return f"""
+            MERGE `porfin.person` person
             USING (
               SELECT
               {firestore_data}
@@ -69,6 +70,6 @@ def create_merge_query(firestore_data, update_set, insert, values):
             WHEN NOT MATCHED THEN
               INSERT ({insert})
               VALUES ({values})
-        '''
+        """
 
 main('')
