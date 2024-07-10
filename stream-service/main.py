@@ -1,27 +1,22 @@
 import functions_framework
 from cloudevents.http import CloudEvent
 from google.events.cloud import firestore
+from google.cloud import bigquery
+from google.cloud import logging
 
 STRING_FIELDS = ['name', 'surname', 'document', 'email']
 FLOAT_FIELDS = ['height', 'weight']
 
+logger = logging.getLogger(__name__)
 
 @functions_framework.cloud_event
 def main(cloud_event: CloudEvent) -> None:
+    logger.info("Event received  for Firestore")
+
     firestore_payload = firestore.DocumentEventData()
     firestore_payload._pb.ParseFromString(cloud_event.data)
 
     id = firestore_payload.value.name.split('/')[-1]
-    print(f'id = {id}')
-
-    # for item in firestore_payload.value.fields.items():
-    #     key = item[0]
-    #     if key in STRING_FIELDS:
-    #         print(f'valor = {item[1].string_value}')
-    #     if key in FLOAT_FIELDS:
-    #         print(f'valor = {item[1].double_value}')
-
-    # items = [('name', 'Renato'), ('height', 1.77)]
 
     firestore_data = ''
     update_set = ''
@@ -41,17 +36,16 @@ def main(cloud_event: CloudEvent) -> None:
             values = f'{values}, '
 
         if key in STRING_FIELDS:
-            # firestore_data = f'''{firestore_data}, '{item[1]}' AS {key}'''
             firestore_data = f'''{firestore_data}, '{item[1].string_value}' AS {key}'''
         if key in FLOAT_FIELDS:
-            # firestore_data = f'{firestore_data}, {item[1]} AS {key}'
             firestore_data = f'''{firestore_data}, '{item[1].double_value}' AS {key}'''
 
         update_set = f'''{update_set} {key}=firestore.{key}'''
         insert = f'''{insert} {key}'''
         values = f'''{values} firestore.{key}'''
 
-    print(create_merge_query(firestore_data, update_set, insert, values))
+    merge_query = create_merge_query(firestore_data, update_set, insert, values)
+    execute_query(merge_query)
 
 def create_merge_query(firestore_data, update_set, insert, values):
     return f"""
@@ -68,3 +62,9 @@ def create_merge_query(firestore_data, update_set, insert, values):
               INSERT ({insert})
               VALUES ({values})
         """
+
+def execute_query(query):
+    client = bigquery.Client()
+    query_job = client.query(query)
+    query_job.result()
+
