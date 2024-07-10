@@ -10,7 +10,11 @@ steps:
       cd stream-service
       gcloud functions deploy firestore-to-bigquery-stream-service \
       --entry-point=main \
+      --gen2 \
       --runtime python38 \
       --region us-central1 \
-      --trigger-http \
+      --trigger-location=us-central1 \
+      --trigger-event-filters=type=google.cloud.firestore.document.v1.written \
+      --trigger-event-filters=database='(default)' \
+      --trigger-event-filters-path-pattern=document='person/{person}'
       --source .
