@@ -9,7 +9,7 @@ COPY batch-service .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copia o código do app para o contêiner
-COPY . .
+COPY stream-service .
 
 EXPOSE 8080
 
