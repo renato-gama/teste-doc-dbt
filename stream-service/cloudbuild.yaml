@@ -1,0 +1,16 @@
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+steps:
+- name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
+  args:
+    - '-c'
+    - |
+      cd firestore-to-bigquery-batch-service
+      gcloud functions deploy firestore-to-bigquery-batch-service \
+      --entry-point=main \
+      --runtime python38 \
+      --region us-central1 \
+      --trigger-http \
+      --source .
