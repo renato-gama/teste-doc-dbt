@@ -1,48 +1,74 @@
-# from google.cloud import firestore
-#
-# client = firestore.Client()
-#
-#
-# # Converts strings added to /messages/{pushId}/original to uppercase
-# def make_upper_case(data, context):
-#     path_parts = context.resource.split("/documents/")[1].split("/")
-#     collection_path = path_parts[0]
-#     document_path = "/".join(path_parts[1:])
-#
-#     affected_doc = client.collection(collection_path).document(document_path)
-#
-#     cur_value = data["value"]["fields"]["original"]["stringValue"]
-#     new_value = cur_value.upper()
-#
-#     if cur_value != new_value:
-#         print(f"Replacing value: {cur_value} --> {new_value}")
-#         affected_doc.set({"original": new_value})
-#     else:
-#         # Value is already upper-case
-#         # Don't perform a second write (which can trigger an infinite loop)
-#         print("Value is already upper-case.")
-#
+import functions_framework
+from cloudevents.http import CloudEvent
+from google.events.cloud import firestore
+
+STRING_FIELDS = ['name', 'surname', 'document', 'email']
+FLOAT_FIELDS = ['height', 'weight']
 
 
+@functions_framework.cloud_event
+def main(cloud_event: CloudEvent) -> None:
+    # firestore_payload = firestore.DocumentEventData()
+    # firestore_payload._pb.ParseFromString(cloud_event.data)
+    #
+    # id = firestore_payload.value.name.split('/')[-1]
+    # print(f'id = {id}')
+    id = 'id_exemplo'
+    #
+    # for item in firestore_payload.value.fields.items():
+    #     key = item[0]
+    #     if key in STRING_FIELDS:
+    #         print(f'valor = {item[1].string_value}')
+    #     if key in FLOAT_FIELDS:
+    #         print(f'valor = {item[1].double_value}')
 
-import json
+    items = [('name', 'Renato'), ('height', 1.77)]
 
-def main(data, context):
-    """Triggered by a change to a Firestore document.
-    Args:
-        data (dict): The event payload.
-        context (google.cloud.functions.Context): Metadata for the event.
-    """
+    firestore_data = ''
+    update_set = ''
+    insert = ''
+    values = ''
 
-    print("YAY")
+    for index, item in enumerate(items, start=1):
+        key = item[0]
+
+        if index == 1:
+            firestore_data = f'''{id} AS id'''
+            insert = f'id'
+            values = f'firestore.id'
+        else:
+            firestore_data = f'{firestore_data},'
+            update_set = f''',{update_set} {key} = firestore.{key}'''
+            insert = f''',{insert} {key}'''
+            values = f''',{values} firestore.{key}'''
 
 
-    trigger_resource = context.resource
+        if key in STRING_FIELDS:
+            firestore_data = f'''{firestore_data} '{item[1]}' AS {key}'''
+            # print(f'valor={item[1]}')
+            # print(f'valor = {item[1].string_value}')
+        if key in FLOAT_FIELDS:
+            firestore_data = f'{firestore_data} {item[1]} AS {key}'
+            # print(f'valor={item[1]}')
+            # print(f'valor = {item[1].double_value}')
 
-    print("Function triggered by change to: %s" % trigger_resource)
 
-    print("\nOld value:")
-    print(json.dumps(data["oldValue"]))
+    print(create_merge_query(firestore_data, update_set, insert, values))
 
-    print("\nNew value:")
-    print(json.dumps(data["value"]))
+def create_merge_query(firestore_data, update_set, insert, values):
+    return f'''
+            MERGE `dataset.person` person
+            USING (
+              SELECT
+              {firestore_data}
+              ) firestore
+              ON person.id = firestore.id
+            WHEN MATCHED THEN
+                UPDATE SET
+                {update_set}
+            WHEN NOT MATCHED THEN
+              INSERT ({insert})
+              VALUES ({values})
+        '''
+
+main('')

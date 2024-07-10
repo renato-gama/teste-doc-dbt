@@ -7,7 +7,7 @@ from person import Person
 
 logger = logging.getLogger(__name__)
 
-FIRESTORE_DATABASE = 'porfin-teste'
+FIRESTORE_DATABASE = 'porfin'
 COLLECTION_NAME = 'person'
 BIGQUERY_DATASET_ID = 'porfin'
 BIGQUERY_TABLE_ID = 'person'
