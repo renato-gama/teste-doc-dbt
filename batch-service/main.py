@@ -6,7 +6,7 @@ from google.cloud import firestore
 from person import Person
 from exceptions import FirestoreException, BigQueryException
 
-FIRESTORE_DATABASE = 'ABC'
+FIRESTORE_DATABASE = 'porfin'
 COLLECTION_NAME = 'person'
 BIGQUERY_DATASET_ID = 'porfin'
 BIGQUERY_TABLE_ID = 'person'
@@ -64,7 +64,7 @@ def insert_into_bigquery():
 
 def table_schema():
     return [
-        bigquery.SchemaField("id", "STRING"),
+        bigquery.SchemaField("id", "INTEGER"),
         bigquery.SchemaField("name", "STRING"),
         bigquery.SchemaField("surname", "STRING"),
         bigquery.SchemaField("document", "STRING"),
