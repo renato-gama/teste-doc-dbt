@@ -35,12 +35,9 @@ def main(cloud_event: CloudEvent) -> None:
             insert = f'{insert}, '
             values = f'{values}, '
 
-        print(f'key = {key}')
         if key in STRING_FIELDS:
-            print("string")
             firestore_data = f'''{firestore_data}, '{item[1].string_value}' AS {key}'''
         elif key in FLOAT_FIELDS:
-            print("float")
             firestore_data = f'''{firestore_data}, {item[1].double_value} AS {key}'''
         else:
             raise FieldNotFoundException(f'Field [{key}] is not in BigQuery Schema]')
