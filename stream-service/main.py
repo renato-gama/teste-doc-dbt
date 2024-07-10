@@ -2,7 +2,7 @@ import functions_framework
 from cloudevents.http import CloudEvent
 from google.events.cloud import firestore
 from google.cloud import bigquery
-from exceptions import BigQueryException
+from exceptions import BigQueryException, FieldNotFoundException
 
 STRING_FIELDS = ['name', 'surname', 'document', 'email']
 FLOAT_FIELDS = ['height', 'weight']
@@ -39,6 +39,8 @@ def main(cloud_event: CloudEvent) -> None:
             firestore_data = f'''{firestore_data}, '{item[1].string_value}' AS {key}'''
         if key in FLOAT_FIELDS:
             firestore_data = f'''{firestore_data}, {item[1].double_value} AS {key}'''
+        else:
+            raise FieldNotFoundException(f'Field [{key} is not in BigQuery Schema]')
 
         update_set = f'''{update_set} {key}=firestore.{key}'''
         insert = f'''{insert} {key}'''
