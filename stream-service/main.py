@@ -8,7 +8,7 @@ STRING_FIELDS = ['name', 'surname', 'document', 'email']
 FLOAT_FIELDS = ['height', 'weight']
 
 logging_client = logging.Client()
-log_name = "firestore-to_bigquery-stream"
+log_name = "firestore-to-bigquery-stream"
 logger = logging_client.logger(log_name)
 
 @functions_framework.cloud_event
